@@ -208,7 +208,7 @@ func (txn *tikvTxn) Commit(ctx context.Context) error {
 		ctx = opentracing.ContextWithSpan(ctx, span1)
 	}
 	defer trace.StartRegion(ctx, "CommitTxn").End()
-
+	return nil
 	if !txn.valid {
 		return kv.ErrInvalidTxn
 	}
