@@ -592,7 +592,8 @@ func openDBWithRetry(driverName, dataSourceName string) (mdb *sql.DB, err error)
 			time.Sleep(sleepTime)
 			continue
 		}
-		err = mdb.Ping()
+		// err = mdb.Ping()
+		err = nil
 		if err == nil {
 			break
 		}

@@ -208,7 +208,6 @@ func (txn *tikvTxn) Commit(ctx context.Context) error {
 		ctx = opentracing.ContextWithSpan(ctx, span1)
 	}
 	defer trace.StartRegion(ctx, "CommitTxn").End()
-	return nil
 	if !txn.valid {
 		return kv.ErrInvalidTxn
 	}
@@ -230,7 +229,6 @@ func (txn *tikvTxn) Commit(ctx context.Context) error {
 	if val != nil {
 		connID = val.(uint64)
 	}
-
 	var err error
 	// If the txn use pessimistic lock, committer is initialized.
 	committer := txn.committer

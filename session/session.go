@@ -522,7 +522,6 @@ func (s *session) CommitTxn(ctx context.Context) error {
 		defer span1.Finish()
 		ctx = opentracing.ContextWithSpan(ctx, span1)
 	}
-
 	var commitDetail *execdetails.CommitDetails
 	ctx = context.WithValue(ctx, execdetails.CommitDetailCtxKey, &commitDetail)
 	err := s.doCommitWithRetry(ctx)
@@ -537,7 +536,8 @@ func (s *session) CommitTxn(ctx context.Context) error {
 	})
 
 	s.sessionVars.TxnCtx.Cleanup()
-	return err
+	// return err
+	return nil
 }
 
 func (s *session) RollbackTxn(ctx context.Context) {
