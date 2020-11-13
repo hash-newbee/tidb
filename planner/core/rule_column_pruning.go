@@ -15,6 +15,7 @@ package core
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/pingcap/parser/ast"
 	"github.com/pingcap/parser/model"
@@ -176,10 +177,14 @@ func (ls *LogicalSort) PruneColumns(parentUsedCols []*expression.Column) error {
 // If any expression can view as a constant in execution stage, such as correlated column, constant,
 // we do prune them. Note that we can't prune the expressions contain non-deterministic functions, such as rand().
 func (lt *LogicalTopN) PruneColumns(parentUsedCols []*expression.Column) error {
+	fmt.Println("Debug: Before LogicalTopN#PruneColumns", parentUsedCols)
 	lt.inlineProjection(parentUsedCols)
+	fmt.Println("Debug: After LogicalTopN#inlineProjection", parentUsedCols)
 	var cols []*expression.Column
 	lt.ByItems, cols = pruneByItems(lt.ByItems)
 	parentUsedCols = append(parentUsedCols, cols...)
+	fmt.Println("Debug: After LogicalTopN#PruneColumns", parentUsedCols)
+
 	return lt.children[0].PruneColumns(parentUsedCols)
 }
 

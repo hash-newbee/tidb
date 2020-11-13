@@ -14,6 +14,8 @@
 package core
 
 import (
+	"fmt"
+
 	"github.com/pingcap/tidb/expression"
 	"github.com/pingcap/tidb/planner/property"
 	"github.com/pingcap/tidb/sessionctx"
@@ -424,11 +426,15 @@ func (p PhysicalIndexMergeReader) Init(ctx sessionctx.Context, offset int) *Phys
 
 // Init initializes PhysicalTableReader.
 func (p PhysicalTableReader) Init(ctx sessionctx.Context, offset int) *PhysicalTableReader {
+	fmt.Println("Debug: PhysicalTableReader#Init")
+	fmt.Println("Debug: 1. cols=", p.Schema().Columns)
 	p.basePhysicalPlan = newBasePhysicalPlan(ctx, plancodec.TypeTableReader, &p, offset)
+	fmt.Println("Debug: 2. cols=", p.Schema().Columns)
 	if p.tablePlan != nil {
 		p.TablePlans = flattenPushDownPlan(p.tablePlan)
 		p.schema = p.tablePlan.Schema()
 	}
+	fmt.Println("Debug: 3. cols=", p.schema.Columns)
 	return &p
 }
 

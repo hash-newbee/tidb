@@ -14,6 +14,8 @@
 package core
 
 import (
+	"fmt"
+
 	"github.com/pingcap/tidb/expression"
 	"github.com/pingcap/tidb/util/disjointset"
 )
@@ -290,6 +292,9 @@ func resolveIndicesForVirtualColumn(result []*expression.Column, schema *express
 
 // ResolveIndices implements Plan interface.
 func (p *PhysicalTableReader) ResolveIndices() error {
+	fmt.Println("Debug: PhysicalTableReader#ResolveIndices")
+	fmt.Println("Debug: p.cols", p.schema.Columns)
+
 	err := resolveIndicesForVirtualColumn(p.schema.Columns, p.schema)
 	if err != nil {
 		return err
@@ -649,6 +654,8 @@ func (p *basePhysicalPlan) ResolveIndices() (err error) {
 	for _, child := range p.children {
 		err = child.ResolveIndices()
 		if err != nil {
+			fmt.Println("Debug error parent=", p, "child=", child)
+			fmt.Println("Debug: p.cols", p.Schema().Columns, "c.cols=", child.Schema().Columns)
 			return err
 		}
 	}

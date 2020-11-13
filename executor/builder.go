@@ -2633,7 +2633,6 @@ func (b *executorBuilder) buildTableReader(v *plannercore.PhysicalTableReader) E
 			concurrency:  b.ctx.GetSessionVars().UnionConcurrency(),
 		}
 	}
-
 	if len(partitions) == 0 {
 		return &TableDualExec{baseExecutor: *ret.base()}
 	}
