@@ -227,7 +227,6 @@ func physicalOptimize(logic LogicalPlan, planCounter *PlanCounterTp) (PhysicalPl
 	if t.invalid() {
 		return nil, 0, ErrInternal.GenWithStackByArgs("Can't find a proper physical plan for this query")
 	}
-
 	err = t.plan().ResolveIndices()
 	return t.plan(), t.cost(), err
 }

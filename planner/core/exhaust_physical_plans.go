@@ -1781,6 +1781,7 @@ func (lt *LogicalTopN) getPhysTopN(prop *property.PhysicalProperty) []PhysicalPl
 			Count:   lt.Count,
 			Offset:  lt.Offset,
 		}.Init(lt.ctx, lt.stats, lt.blockOffset, resultProp)
+		topN.SetSchema(lt.Schema())
 		ret = append(ret, topN)
 	}
 	return ret
@@ -1812,6 +1813,7 @@ func (lt *LogicalTopN) getPhysLimits(prop *property.PhysicalProperty) []Physical
 			Count:  lt.Count,
 			Offset: lt.Offset,
 		}.Init(lt.ctx, lt.stats, lt.blockOffset, resultProp)
+		limit.SetSchema(lt.Schema())
 		ret = append(ret, limit)
 	}
 	return ret
@@ -1833,6 +1835,7 @@ func MatchItems(p *property.PhysicalProperty, items []*util.ByItems) bool {
 
 func (lt *LogicalTopN) exhaustPhysicalPlans(prop *property.PhysicalProperty) ([]PhysicalPlan, bool) {
 	if MatchItems(prop, lt.ByItems) {
+		fmt.Println("Debug: LogicalTopN#exhaustPhysicalPlans schema", lt.Schema())
 		return append(lt.getPhysTopN(prop), lt.getPhysLimits(prop)...), true
 	}
 	return nil, true

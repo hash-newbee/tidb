@@ -15,7 +15,6 @@ package core
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/cznic/mathutil"
 	"github.com/pingcap/tidb/expression"
@@ -43,7 +42,6 @@ func (s *baseLogicalPlan) pushDownTopN(topN *LogicalTopN) LogicalPlan {
 
 // setChild set p as topn's child.
 func (lt *LogicalTopN) setChild(p LogicalPlan) LogicalPlan {
-	fmt.Println("LogicalTopN pushed down")
 	// Remove this TopN if its child is a TableDual.
 	dual, isDual := p.(*LogicalTableDual)
 	if isDual {

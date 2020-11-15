@@ -14,6 +14,7 @@
 package core
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/pingcap/parser/ast"
@@ -729,6 +730,7 @@ func finishCopTask(ctx sessionctx.Context, task task) task {
 		t.cst += t.count() * sessVars.NetworkFactor * t.tblColHists.GetAvgRowSize(ctx, t.tablePlan.Schema().Columns, false, false)
 
 		tp := t.tablePlan
+		fmt.Println("Debug: Task.tablePlan children count=", len(tp.Children()))
 		for len(tp.Children()) > 0 {
 			if len(tp.Children()) == 1 {
 				tp = tp.Children()[0]
@@ -737,8 +739,10 @@ func finishCopTask(ctx sessionctx.Context, task task) task {
 				tp = join.children[1-join.InnerChildIdx]
 			}
 		}
+		fmt.Println("Debug: Before ExpandVirtualColumn, t.tablePlan.schema=", tp.Schema())
 		ts := tp.(*PhysicalTableScan)
 		ts.Columns = ExpandVirtualColumn(ts.Columns, ts.schema, ts.Table.Columns)
+		fmt.Println("Debug: After ExpandVirtualColumn, t.tablePlan.schema=", tp.Schema())
 	}
 	t.cst /= copIterWorkers
 	newTask := &rootTask{
@@ -763,6 +767,7 @@ func finishCopTask(ctx sessionctx.Context, task task) task {
 		newTask.p = p
 	} else {
 		tp := t.tablePlan
+		fmt.Println("Debug: Task.tablePlan children count=", len(tp.Children()))
 		for len(tp.Children()) > 0 {
 			if len(tp.Children()) == 1 {
 				tp = tp.Children()[0]
@@ -771,6 +776,7 @@ func finishCopTask(ctx sessionctx.Context, task task) task {
 				tp = join.children[1-join.InnerChildIdx]
 			}
 		}
+		fmt.Println("Debug: !!! PTAL")
 		ts := tp.(*PhysicalTableScan)
 		p := PhysicalTableReader{
 			tablePlan:      t.tablePlan,
@@ -781,12 +787,13 @@ func finishCopTask(ctx sessionctx.Context, task task) task {
 		p.stats = t.tablePlan.statsInfo()
 		newTask.p = p
 	}
-
+	fmt.Println("Debug: Task.rootTaskConds count=", len(t.rootTaskConds))
 	if len(t.rootTaskConds) > 0 {
 		sel := PhysicalSelection{Conditions: t.rootTaskConds}.Init(ctx, newTask.p.statsInfo(), newTask.p.SelectBlockOffset())
 		sel.SetChildren(newTask.p)
 		newTask.p = sel
 	}
+	fmt.Println("Debug: Inn the end finishCopTask newTask.plan=", newTask.plan())
 
 	return newTask
 }
