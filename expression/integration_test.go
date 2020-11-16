@@ -6049,8 +6049,8 @@ func (s *testSuite) TestVirtualGeneratedColumnAndLimit(c *C) {
 	tk.MustQuery("select /*+ LIMIT_TO_COP() */ b from t limit 1;").Check(testkit.Rows("2"))
 	// fmt.Println("Debug: run select b from t order by b;")
 	// tk.MustQuery("select /*+ LIMIT_TO_COP() */ b from t order by b;").Check(testkit.Rows("2"))
-	// fmt.Println("Debug: run select b from t order by b limit 1;")
-	// tk.MustQuery("select /*+ LIMIT_TO_COP() */ b from t order by b limit 1;").Check(testkit.Rows("2"))
+	fmt.Println("Debug: run select b from t order by b limit 1;")
+	tk.MustQuery("select /*+ LIMIT_TO_COP() */ b from t order by b limit 1;").Check(testkit.Rows("2"))
 }
 
 func (s *testIntegrationSerialSuite) TestCollationBasic(c *C) {

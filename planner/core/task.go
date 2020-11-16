@@ -739,10 +739,11 @@ func finishCopTask(ctx sessionctx.Context, task task) task {
 				tp = join.children[1-join.InnerChildIdx]
 			}
 		}
-		fmt.Println("Debug: Before ExpandVirtualColumn, t.tablePlan.schema=", tp.Schema())
-		ts := tp.(*PhysicalTableScan)
+		fmt.Println("Debug: Before ExpandVirtualColumn, t.tablePlan.schema=", t.tablePlan.Schema())
+		ts := tp.(*PhysicalTableScan) // what happend??? why schema is clone
+		fmt.Println("Debud: !!!PTAL tp.schema ref=", tp.Schema(), "ts.schema ref=", ts.Schema())
 		ts.Columns = ExpandVirtualColumn(ts.Columns, ts.schema, ts.Table.Columns)
-		fmt.Println("Debug: After ExpandVirtualColumn, t.tablePlan.schema=", tp.Schema())
+		fmt.Println("Debug: After ExpandVirtualColumn, t.tablePlan.schema=", t.tablePlan.Schema())
 	}
 	t.cst /= copIterWorkers
 	newTask := &rootTask{
