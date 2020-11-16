@@ -1781,7 +1781,7 @@ func (lt *LogicalTopN) getPhysTopN(prop *property.PhysicalProperty) []PhysicalPl
 			Count:   lt.Count,
 			Offset:  lt.Offset,
 		}.Init(lt.ctx, lt.stats, lt.blockOffset, resultProp)
-		topN.SetSchema(lt.Schema())
+		// topN.SetSchema(lt.Schema())
 		ret = append(ret, topN)
 	}
 	return ret
@@ -1813,7 +1813,7 @@ func (lt *LogicalTopN) getPhysLimits(prop *property.PhysicalProperty) []Physical
 			Count:  lt.Count,
 			Offset: lt.Offset,
 		}.Init(lt.ctx, lt.stats, lt.blockOffset, resultProp)
-		limit.SetSchema(lt.Schema())
+		// limit.SetSchema(lt.Schema())
 		ret = append(ret, limit)
 	}
 	return ret
@@ -2221,11 +2221,11 @@ func (ls *LogicalSort) exhaustPhysicalPlans(prop *property.PhysicalProperty) ([]
 	if MatchItems(prop, ls.ByItems) {
 		ret := make([]PhysicalPlan, 0, 2)
 		ps := ls.getPhysicalSort(prop)
-		ps.SetSchema(ls.Schema())
+		// ps.SetSchema(ls.Schema())
 		ret = append(ret, ps)
 		ns := ls.getNominalSort(prop)
 		if ns != nil {
-			ns.SetSchema(ls.Schema())
+			// ns.SetSchema(ls.Schema())
 			ret = append(ret, ns)
 		}
 		return ret, true
