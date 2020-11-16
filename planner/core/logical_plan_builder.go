@@ -2941,6 +2941,7 @@ func getStatsTable(ctx sessionctx.Context, tblInfo *model.TableInfo, pid int64) 
 }
 
 func (b *PlanBuilder) buildDataSource(ctx context.Context, tn *ast.TableName, asName *model.CIStr) (LogicalPlan, error) {
+	// TODO: @hidehalo PTAL
 	dbName := tn.Schema
 	sessionVars := b.ctx.GetSessionVars()
 	if dbName.L == "" {
@@ -3183,7 +3184,6 @@ func (b *PlanBuilder) buildDataSource(ctx context.Context, tn *ast.TableName, as
 			}
 		}
 	}
-
 	return result, nil
 }
 

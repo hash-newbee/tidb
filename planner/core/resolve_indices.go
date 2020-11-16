@@ -292,7 +292,7 @@ func resolveIndicesForVirtualColumn(result []*expression.Column, schema *express
 
 // ResolveIndices implements Plan interface.
 func (p *PhysicalTableReader) ResolveIndices() error {
-	fmt.Println("Debug: PhysicalTableReader#ResolveIndices start", p.ExplainID())
+	fmt.Println("Debug: PhysicalTableReader#ResolveIndices start", p.ExplainID(), "schema=", p.schema)
 	fmt.Println("Debug : resolveIndicesForVirtualColumn, cols=", p.schema.Columns)
 	err := resolveIndicesForVirtualColumn(p.schema.Columns, p.schema)
 	if err != nil {
@@ -654,7 +654,6 @@ func (p *basePhysicalPlan) ResolveIndices() (err error) {
 	for _, child := range p.children {
 		err = child.ResolveIndices()
 		if err != nil {
-			fmt.Println("Debug: ResolveIndices error, parentPlan=", p, "childPlan=", child)
 			return err
 		}
 	}

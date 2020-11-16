@@ -430,7 +430,7 @@ func (p PhysicalTableReader) Init(ctx sessionctx.Context, offset int) *PhysicalT
 	if p.tablePlan != nil {
 		p.TablePlans = flattenPushDownPlan(p.tablePlan)
 		p.schema = p.tablePlan.Schema()
-		fmt.Println("Debug !!!: tablePlan.Schema()=", p.schema)
+		fmt.Println("Debug !!!: ", p.ExplainID(), "Schema()=", p.schema)
 	}
 	return &p
 }

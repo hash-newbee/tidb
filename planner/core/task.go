@@ -14,7 +14,6 @@
 package core
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/pingcap/parser/ast"
@@ -718,9 +717,6 @@ func finishCopTask(ctx sessionctx.Context, task task) task {
 	if !ok {
 		return task
 	}
-	if t.tablePlan != nil {
-		fmt.Println("Debug: Start do finishCopTask, task.tablePlan=", t.tablePlan.ExplainID(), "cols=", t.tablePlan)
-	}
 	sessVars := ctx.GetSessionVars()
 	// copTasks are run in parallel, to make the estimated cost closer to execution time, we amortize
 	// the cost to cop iterator workers. According to `CopClient::Send`, the concurrency
@@ -741,11 +737,10 @@ func finishCopTask(ctx sessionctx.Context, task task) task {
 				tp = join.children[1-join.InnerChildIdx]
 			}
 		}
-		fmt.Println("Debug: !!!PTAL!!!")
-		fmt.Println("Debug: Before ExpandVirtualColumn, tp=", tp.ExplainID(), "t.tablePlan=", t.tablePlan.ExplainID(), "t.tablePlan.schema=", t.tablePlan)
+		// fmt.Println("Debug : !!! Before ExpandVirtualColumn,", "t.tablePlan=", t.tablePlan.ExplainID(), "t.tablePlan.schema=", t.tablePlan)
 		ts := tp.(*PhysicalTableScan)
 		ts.Columns = ExpandVirtualColumn(ts.Columns, ts.schema, ts.Table.Columns)
-		fmt.Println("Debug: After ExpandVirtualColumn,", "tp=", tp.ExplainID(), "ts=", ts.ExplainID(), "t.tablePlan=", t.tablePlan.ExplainID(), "t.tablePlan.schema=", t.tablePlan)
+		// fmt.Println("Debug : !!! After ExpandVirtualColumn,", "t.tablePlan=", t.tablePlan.ExplainID(), "t.tablePlan.schema=", t.tablePlan)
 	}
 	t.cst /= copIterWorkers
 	newTask := &rootTask{
@@ -986,6 +981,8 @@ func (p *PhysicalTopN) getPushedDownTopN(childPlan PhysicalPlan) *PhysicalTopN {
 		Count:   newCount,
 	}.Init(p.ctx, stats, p.blockOffset)
 	topN.SetChildren(childPlan)
+	// TODO: @hidehalo PTAL
+	// topN.SetSchema(childPlan.Schema())
 	return topN
 }
 

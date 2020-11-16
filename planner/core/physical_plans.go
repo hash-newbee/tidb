@@ -14,7 +14,6 @@
 package core
 
 import (
-	"fmt"
 	"unsafe"
 
 	"github.com/pingcap/errors"
@@ -532,7 +531,6 @@ func ExpandVirtualColumn(columns []*model.ColumnInfo, schema *expression.Schema,
 		if col.VirtualExpr == nil {
 			continue
 		}
-		fmt.Println("Debug: ", "col.VirtualExpr=", col.VirtualExpr, "Before ExtractDependentColumns, schema=", schema)
 		baseCols := expression.ExtractDependentColumns(col.VirtualExpr)
 		for _, baseCol := range baseCols {
 			if !schema.Contains(baseCol) {
@@ -540,7 +538,6 @@ func ExpandVirtualColumn(columns []*model.ColumnInfo, schema *expression.Schema,
 				copyColumn = append(copyColumn, FindColumnInfoByID(colsInfo, baseCol.ID))
 			}
 		}
-		fmt.Println("Debug: After ExtractDependentColumns, schema=", schema)
 	}
 	if extraColumn != nil {
 		schema.Columns = append(schema.Columns, extraColumn)

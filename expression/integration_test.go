@@ -6045,10 +6045,8 @@ func (s *testSuite) TestVirtualGeneratedColumnAndLimit(c *C) {
 	tk.MustExec("drop table if exists t;")
 	tk.MustExec("create table t (a int, b int as (a + 1));")
 	tk.MustExec("insert into t(a) values (1);")
-	// fmt.Println("Debug: run select b from t limit 1;")
-	// tk.MustQuery("select /*+ LIMIT_TO_COP() */ b from t limit 1;").Check(testkit.Rows("2"))
-	fmt.Println("Debug: run select b from t order by b;")
-	tk.MustQuery("select /*+ LIMIT_TO_COP() */ b from t order by b;").Check(testkit.Rows("2"))
+	fmt.Println("Debug: run select b from t limit 1;")
+	tk.MustQuery("select /*+ LIMIT_TO_COP() */ b from t limit 1;").Check(testkit.Rows("2"))
 	fmt.Println("Debug: run select b from t order by b limit 1;")
 	tk.MustQuery("select /*+ LIMIT_TO_COP() */ b from t order by b limit 1;").Check(testkit.Rows("2"))
 }
