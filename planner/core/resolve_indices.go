@@ -278,10 +278,6 @@ func (p *PhysicalUnionScan) ResolveIndices() (err error) {
 
 // resolveIndicesForVirtualColumn resolves dependent columns's indices for virtual columns.
 func resolveIndicesForVirtualColumn(result []*expression.Column, schema *expression.Schema) error {
-	fmt.Println("Debug: resolveIndicesForVirtualColumn#schema=", schema)
-	for _, col := range result {
-		fmt.Println("Debug: Resolve VirtualExpr col=", col, "vexpr=", col.VirtualExpr)
-	}
 	for _, col := range result {
 		if col.VirtualExpr != nil {
 			newExpr, err := col.VirtualExpr.ResolveIndices(schema)
@@ -657,9 +653,7 @@ func (p *basePhysicalPlan) ResolveIndices() (err error) {
 	for _, child := range p.children {
 		err = child.ResolveIndices()
 		if err != nil {
-			fmt.Println("Debug: error info=", err)
-			fmt.Println("Debug: error parent=", p, "child=", child)
-			fmt.Println("Debug: error parent.schema=", p.Schema(), "child.schema=", child.Schema())
+			fmt.Println("Debug: ResolveIndices error, parentPlan=", p, "childPlan=", child)
 			return err
 		}
 	}

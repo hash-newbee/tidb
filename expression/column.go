@@ -467,7 +467,6 @@ func (col *Column) ResolveIndices(schema *Schema) (Expression, error) {
 func (col *Column) resolveIndices(schema *Schema) error {
 	col.Index = schema.ColumnIndex(col)
 	if col.Index == -1 {
-		fmt.Println("Debug: resolveIndices error, col=", col, "schema=", schema)
 		return errors.Errorf("Can't find column %s in schema %s", col, schema)
 	}
 	return nil

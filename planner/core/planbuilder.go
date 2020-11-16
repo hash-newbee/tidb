@@ -1160,7 +1160,6 @@ func FindColumnInfoByID(colInfos []*model.ColumnInfo, id int64) *model.ColumnInf
 			return info
 		}
 	}
-	fmt.Println("Debug: !!!PTAL copyColumn !eq schema.Columns, FindColumnInfoByID failed")
 	return nil
 }
 

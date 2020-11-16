@@ -718,6 +718,9 @@ func finishCopTask(ctx sessionctx.Context, task task) task {
 	if !ok {
 		return task
 	}
+	if t.tablePlan != nil {
+		fmt.Println("Debug: Start do finishCopTask, task.tablePlan=", t.tablePlan.ExplainID(), "cols=", t.tablePlan)
+	}
 	sessVars := ctx.GetSessionVars()
 	// copTasks are run in parallel, to make the estimated cost closer to execution time, we amortize
 	// the cost to cop iterator workers. According to `CopClient::Send`, the concurrency
@@ -730,7 +733,6 @@ func finishCopTask(ctx sessionctx.Context, task task) task {
 		t.cst += t.count() * sessVars.NetworkFactor * t.tblColHists.GetAvgRowSize(ctx, t.tablePlan.Schema().Columns, false, false)
 
 		tp := t.tablePlan
-		fmt.Println("Debug: Task.tablePlan children count=", len(tp.Children()))
 		for len(tp.Children()) > 0 {
 			if len(tp.Children()) == 1 {
 				tp = tp.Children()[0]
@@ -739,11 +741,11 @@ func finishCopTask(ctx sessionctx.Context, task task) task {
 				tp = join.children[1-join.InnerChildIdx]
 			}
 		}
-		fmt.Println("Debug: Before ExpandVirtualColumn, t.tablePlan.schema=", t.tablePlan.Schema())
-		ts := tp.(*PhysicalTableScan) // what happend??? why schema is clone
-		fmt.Println("Debud: !!!PTAL tp.schema ref=", tp.Schema(), "ts.schema ref=", ts.Schema())
+		fmt.Println("Debug: !!!PTAL!!!")
+		fmt.Println("Debug: Before ExpandVirtualColumn, tp=", tp.ExplainID(), "t.tablePlan=", t.tablePlan.ExplainID(), "t.tablePlan.schema=", t.tablePlan)
+		ts := tp.(*PhysicalTableScan)
 		ts.Columns = ExpandVirtualColumn(ts.Columns, ts.schema, ts.Table.Columns)
-		fmt.Println("Debug: After ExpandVirtualColumn, t.tablePlan.schema=", t.tablePlan.Schema())
+		fmt.Println("Debug: After ExpandVirtualColumn,", "tp=", tp.ExplainID(), "ts=", ts.ExplainID(), "t.tablePlan=", t.tablePlan.ExplainID(), "t.tablePlan.schema=", t.tablePlan)
 	}
 	t.cst /= copIterWorkers
 	newTask := &rootTask{
@@ -768,7 +770,6 @@ func finishCopTask(ctx sessionctx.Context, task task) task {
 		newTask.p = p
 	} else {
 		tp := t.tablePlan
-		fmt.Println("Debug: Task.tablePlan children count=", len(tp.Children()))
 		for len(tp.Children()) > 0 {
 			if len(tp.Children()) == 1 {
 				tp = tp.Children()[0]
@@ -777,7 +778,6 @@ func finishCopTask(ctx sessionctx.Context, task task) task {
 				tp = join.children[1-join.InnerChildIdx]
 			}
 		}
-		fmt.Println("Debug: !!! PTAL")
 		ts := tp.(*PhysicalTableScan)
 		p := PhysicalTableReader{
 			tablePlan:      t.tablePlan,
@@ -788,14 +788,11 @@ func finishCopTask(ctx sessionctx.Context, task task) task {
 		p.stats = t.tablePlan.statsInfo()
 		newTask.p = p
 	}
-	fmt.Println("Debug: Task.rootTaskConds count=", len(t.rootTaskConds))
 	if len(t.rootTaskConds) > 0 {
 		sel := PhysicalSelection{Conditions: t.rootTaskConds}.Init(ctx, newTask.p.statsInfo(), newTask.p.SelectBlockOffset())
 		sel.SetChildren(newTask.p)
 		newTask.p = sel
 	}
-	fmt.Println("Debug: Inn the end finishCopTask newTask.plan=", newTask.plan())
-
 	return newTask
 }
 

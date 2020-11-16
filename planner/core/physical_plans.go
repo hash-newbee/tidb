@@ -151,7 +151,6 @@ func (p *PhysicalTableReader) Clone() (PhysicalPlan, error) {
 	if cloned.TablePlans, err = clonePhysicalPlan(p.TablePlans); err != nil {
 		return nil, err
 	}
-	fmt.Println("Debug: !!!PTAL PhysicalTableReader Cloned")
 	return cloned, nil
 }
 
@@ -533,8 +532,7 @@ func ExpandVirtualColumn(columns []*model.ColumnInfo, schema *expression.Schema,
 		if col.VirtualExpr == nil {
 			continue
 		}
-		fmt.Println("Debug: Before ExpandVirtualColumn#ExtractDependentColumns=", schema)
-		fmt.Println("Debug: col.VirtualExpr=", col.VirtualExpr)
+		fmt.Println("Debug: ", "col.VirtualExpr=", col.VirtualExpr, "Before ExtractDependentColumns, schema=", schema)
 		baseCols := expression.ExtractDependentColumns(col.VirtualExpr)
 		for _, baseCol := range baseCols {
 			if !schema.Contains(baseCol) {
@@ -542,7 +540,7 @@ func ExpandVirtualColumn(columns []*model.ColumnInfo, schema *expression.Schema,
 				copyColumn = append(copyColumn, FindColumnInfoByID(colsInfo, baseCol.ID))
 			}
 		}
-		fmt.Println("Debug: After ExpandVirtualColumn#ExtractDependentColumns=", schema)
+		fmt.Println("Debug: After ExtractDependentColumns, schema=", schema)
 	}
 	if extraColumn != nil {
 		schema.Columns = append(schema.Columns, extraColumn)
