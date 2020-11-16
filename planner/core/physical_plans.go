@@ -151,6 +151,7 @@ func (p *PhysicalTableReader) Clone() (PhysicalPlan, error) {
 	if cloned.TablePlans, err = clonePhysicalPlan(p.TablePlans); err != nil {
 		return nil, err
 	}
+	fmt.Println("Debug: !!!PTAL PhysicalTableReader Cloned")
 	return cloned, nil
 }
 
